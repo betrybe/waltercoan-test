@@ -10,9 +10,9 @@ exports.login = async function (req, res) {
         await userService.validateUser(authUser).then((response) => {
             const id = response._id;
             const token = jwt.sign({ id }, config.secret, {
-                expiresIn: 300 
+                expiresIn: 1800,
             });
-            res.status(200).json({ token: token });
+            res.status(200).json({ token });
         }).catch((error) => {
             res.statusMessage = error.toString();
             res.status(401).send({ message: error.message });

@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 const config = require('../config');
 
 const dbCollection = 'users';
@@ -12,8 +12,20 @@ async function dbConnect() {
 exports.getAll = async function () {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
-    const findResult = await collection.find({}).toArray();
-    return findResult;
+    return new Promise((resolve, reject) => {
+        collection.find({}, (err, documents) => {
+            resolve(documents.toArray());
+        });
+    });
+};
+exports.getById = async function (id) {
+    const dbClient = await dbConnect();
+    const collection = dbClient.collection(dbCollection);
+    return new Promise((resolve, reject) => {
+        collection.findOne({ _id: new ObjectID(id)}, (err, document) => {
+            resolve(document);
+        });
+    });
 };
 exports.insertNew = async function (user) {
     const dbClient = await dbConnect();

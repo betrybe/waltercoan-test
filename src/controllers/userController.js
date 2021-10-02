@@ -2,7 +2,10 @@ const userService = require('../services/userService');
 const { User } = require('../models/user');
 
 exports.getAll = function (req, res) {
-    res.send(userService.getAll());
+    userService.getAll().then((response) => {
+        res.status(200);
+        res.send(response);
+    });
 };
 exports.insertNew = async function (req, res) {
     const newUser = new User();
