@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 const { MongoClient, ObjectID } = require('mongodb');
 const config = require('../config');
 
@@ -9,44 +10,47 @@ async function dbConnect() {
     const db = client.db(config.db.DB_NAME);
     return db;
 }
-exports.getAll = async function () {
+exports.getAll = async function getAll() {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
-    return new Promise((resolve, reject) => {
-        collection.find({}, (err, documents) => {
+    return new Promise((resolve, _reject) => {
+        collection.find({}, (_err, documents) => {
             resolve(documents.toArray());
         });
     });
 };
-exports.getById = async function (id) {
+exports.getById = async function getById(id) {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
         const hex = /[0-9A-Fa-f]{6}/g;
-        const idDoc = (hex.test(id))? ObjectID(id) : id;
-        collection.findOne({ _id: idDoc}, (err, document) => {
+        const idDoc = (hex.test(id)) ? ObjectID(id) : id;
+        collection.findOne({ _id: idDoc }, (_err, document) => {
             resolve(document);
         });
     });
 };
-exports.insertNew = async function (user, userLoggedId) {
+// eslint-disable-next-line max-lines-per-function
+exports.insertNew = async function insertNew(user, userLoggedId) {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
+    // eslint-disable-next-line max-lines-per-function
     return new Promise((resolve, reject) => {
         if (user.role === 'admin') {
             const hex = /[0-9A-Fa-f]{6}/g;
-            userLoggedId = (hex.test(userLoggedId))? ObjectID(userLoggedId) : userLoggedId;
-            collection.findOne({ _id: userLoggedId }, (err, document) => {
+            // eslint-disable-next-line no-param-reassign
+            const userLoggedIdFilter = (hex.test(userLoggedId)) ? ObjectID(userLoggedId) 
+                : userLoggedId;
+            collection.findOne({ _id: userLoggedIdFilter }, (_err, document) => {
                 if (document == null || document.role !== 'admin') {
                     reject(new Error('Only admins can register new admins'));
                 }
             });
         }
-        collection.findOne({ email: user.email }, (err, document) => {
+        collection.findOne({ email: user.email }, (_err, document) => {
             if (document != null) {
                 reject(new Error('Email already registered'));
-            } else { 
-
+            } else {
                 collection.insertOne(user).then(({ ops }) => {
                     resolve({
                         result: ops[0],
@@ -56,11 +60,12 @@ exports.insertNew = async function (user, userLoggedId) {
         });
     });
 };
-exports.validateUser = async function (userAuth) {
+exports.validateUser = async function validateUser(userAuth) {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
     return new Promise((resolve, reject) => {
-        collection.findOne({ email: userAuth.email, password: userAuth.password  }, (err, document) => {
+        collection.findOne({ email: userAuth.email, password: userAuth.password }, 
+            (_err, document) => {
             if (document == null) {
                 reject(new Error('Incorrect username or password'));
             }

@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-var multer = require("multer")
+const multer = require('multer');
 const userController = require('../controllers/userController');
 const loginController = require('../controllers/loginController');
 const recipeController = require('../controllers/recipeController');
@@ -16,15 +16,15 @@ app.get('/', (request, response) => {
   response.send();
 });
 // Não remover esse end-point, ele é necessário para o avaliador
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'src/uploads/')
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, 'src/uploads/');
   },
-  filename: function (req, file, cb) {
-    cb(null, req.params.id + ".jpeg")
-  }
-})
-var upload = multer({ storage: storage })
+  filename(req, file, cb) {
+    cb(null, `${req.params.id}.jpeg`);
+  },
+});
+const upload = multer({ storage });
 router.use(authService.checkToken);
 router.get('/users', userController.getAll);
 router.post('/users/admin', userController.insertNewAdmin);

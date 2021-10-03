@@ -1,9 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 const jwt = require('jsonwebtoken');
 const { AuthUser } = require('../models/authUser');
 const userService = require('../services/userService');
 const config = require('../config');
 
-exports.login = async function (req, res) {
+exports.login = async function login(req, res) {
     const authUser = new AuthUser();
     try {
         authUser.fill(req.body);
