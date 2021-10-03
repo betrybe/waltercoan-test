@@ -19,6 +19,6 @@ exports.login = async function (req, res) {
         });
     } catch (e) {
         res.statusMessage = e.toString();
-        res.status(400).send({ message: e.message });
+        res.status(401).send({ message: e.message });
     }
 };

@@ -13,9 +13,8 @@ class User {
         this.name = data.name;
         this.email = data.email;
         this.password = data.password;
-        this.role = data.role;
         if (this.name === undefined || this.email === undefined
-            || this.password === undefined || this.role === undefined) {
+            || this.password === undefined) {
             throw new Error('Invalid entries. Try again.');
         }
     }

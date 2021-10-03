@@ -22,7 +22,9 @@ exports.getById = async function (id) {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
     return new Promise((resolve, reject) => {
-        collection.findOne({ _id: new ObjectID(id)}, (err, document) => {
+        const hex = /[0-9A-Fa-f]{6}/g;
+        const idDoc = (hex.test(id))? ObjectID(id) : id;
+        collection.findOne({ _id: idDoc}, (err, document) => {
             resolve(document);
         });
     });

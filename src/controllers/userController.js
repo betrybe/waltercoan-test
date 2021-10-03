@@ -8,17 +8,23 @@ exports.getAll = function (req, res) {
     });
 };
 exports.insertNew = async function (req, res) {
-    const newUser = new User();
+    let newUser = new User();
     try {
         newUser.fill(req.body);
-        
-        await userService.insertNew(newUser).then((response) => {
-            res.status(201);
-            res.send({ user: response.result }).end();    
-        }).catch((error) => {
-            res.statusMessage = error.toString();
-            res.status(409).send({ message: error.message });
-        });
+        const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g;
+        if (!validEmail.test(newUser.email)) {
+            res.status(400).send({ message: "Invalid entries. Try again." });
+        } else {
+            await userService.insertNew(newUser).then((response) => {
+                newUser = response.result;
+                delete newUser.password;
+                res.status(201);
+                res.send({ user: newUser }).end();    
+            }).catch((error) => {
+                res.statusMessage = error.toString();
+                res.status(409).send({ message: error.message });
+            });
+        }
     } catch (e) {
         res.statusMessage = e.toString();
         res.status(400).send({ message: e.message });
