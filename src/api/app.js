@@ -27,6 +27,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 router.use(authService.checkToken);
 router.get('/users', userController.getAll);
+router.post('/users/admin', userController.insertNewAdmin);
 router.post('/users', userController.insertNew);
 router.post('/login', loginController.login);
 router.post('/recipes', recipeController.insertNew);

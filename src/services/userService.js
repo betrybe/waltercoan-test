@@ -29,19 +29,30 @@ exports.getById = async function (id) {
         });
     });
 };
-exports.insertNew = async function (user) {
+exports.insertNew = async function (user, userLoggedId) {
     const dbClient = await dbConnect();
     const collection = dbClient.collection(dbCollection);
     return new Promise((resolve, reject) => {
+        if (user.role === 'admin') {
+            const hex = /[0-9A-Fa-f]{6}/g;
+            userLoggedId = (hex.test(userLoggedId))? ObjectID(userLoggedId) : userLoggedId;
+            collection.findOne({ _id: userLoggedId }, (err, document) => {
+                if (document == null || document.role !== 'admin') {
+                    reject(new Error('Only admins can register new admins'));
+                }
+            });
+        }
         collection.findOne({ email: user.email }, (err, document) => {
             if (document != null) {
                 reject(new Error('Email already registered'));
+            } else { 
+
+                collection.insertOne(user).then(({ ops }) => {
+                    resolve({
+                        result: ops[0],
+                    });
+                });
             }
-        });
-        collection.insertOne(user).then(({ ops }) => {
-            resolve({
-                result: ops[0],
-            });
         });
     });
 };
